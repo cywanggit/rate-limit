@@ -1,0 +1,10 @@
+建议使用Memory进行限流
+若使用Redis做存储会增加接口耗时 需要网络消耗
+注意事项
+使用redis 中 redis 中key 不能有
+
+default_currentTime
+
+default_requestTime（可选）
+
+default_startLimitTimeMillis
