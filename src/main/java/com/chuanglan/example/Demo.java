@@ -2,6 +2,7 @@ package com.chuanglan.example;
 
 import com.chuanglan.config.DefaultRatelimiter;
 import com.chuanglan.config.RateLimiter;
+import com.chuanglan.config.RedisLuaRateLimiter;
 import com.chuanglan.entity.MemoryRate;
 import com.chuanglan.entity.Rate;
 import com.chuanglan.entity.RedisRate;
@@ -19,7 +20,26 @@ import java.util.concurrent.Executors;
 public class Demo {
     public static void main(String[] args) throws InterruptedException {
         Demo demo = new Demo();
-        demo.test();
+//        demo.test();
+        demo.testNewRedisLimiter();
+    }
+
+
+    public void testNewRedisLimiter() throws InterruptedException {
+        Rate rate = new RedisRate("localhost",6379,"default_limitTimeMillis","default_time");
+        RateLimiter rateLimiter = new RedisLuaRateLimiter(rate);
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        for (int i = 0; i < 600; i++) {
+            executor.execute(new RedisRateTest("" + i,rate,rateLimiter));
+        }
+
+
+        Thread.sleep(10000);
+        for (int i = 0; i < 1000; i++) {
+            executor.execute(new RedisRateTest("" + (i+1000),rate,rateLimiter));
+        }
+        executor.shutdown();
     }
 
     public void test() throws InterruptedException {
@@ -60,7 +80,28 @@ public class Demo {
             }
             boolean limit = rateLimiter.limit();
             rate.releaseLock();
-            System.out.println("花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
+            System.out.println("当前时间:"+ rate.getStartLimitTimeMillis()+ "花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
+        }
+    }
+
+    class RedisRateTest implements Runnable {
+        private Rate rate;
+        private RateLimiter rateLimiter;
+        private String name;
+
+        public RedisRateTest(String name,Rate rate, RateLimiter rateLimiter) {
+            this.rate = rate;
+            this.rateLimiter = rateLimiter;
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            long start = System.currentTimeMillis();
+//            boolean limit = rateLimiter.limit();
+//            System.out.println("花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
+            boolean limit = rateLimiter.limit();
+            System.out.println("当前时间:"+ rate.getStartLimitTimeMillis()+ "花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
         }
     }
 }

@@ -12,4 +12,8 @@ public interface RateLimiter {
     boolean limit();
 
     void isNeedRequestTime(boolean isNeedRequestTime);
+
+    default String getResultMsg() {
+        return "";
+    }
 }

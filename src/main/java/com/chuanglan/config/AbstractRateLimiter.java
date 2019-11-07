@@ -28,6 +28,7 @@ public abstract class AbstractRateLimiter implements RateLimiter{
     }
 
     public boolean limit(boolean isNeedRequestTime) {
+        rate.getLock();
         if (rate == null){
             throw new IllegalArgumentException("参数异常");
         }

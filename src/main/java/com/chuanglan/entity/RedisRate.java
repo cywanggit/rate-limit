@@ -5,10 +5,12 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Transaction;
 
 /**
  * @copyright (C),  2019-2019, 创蓝253
@@ -25,6 +27,10 @@ public class RedisRate implements Rate{
 
     private long time;
 
+    private String limitTimeMillisKey;
+
+    private String timeKey;
+
 
     public RedisRate(String host, int port,String limitTimeMillisKey,String timeKey) {
         //1 获得连接池配置对象，设置配置项
@@ -38,16 +44,41 @@ public class RedisRate implements Rate{
         //获得连接池
         jedisPool = new JedisPool(config,host,port);
         Jedis resource = jedisPool.getResource();
-
+        this.limitTimeMillisKey = limitTimeMillisKey;
+        this.timeKey = timeKey;
         limitTimeMillis = Long.valueOf(resource.get(limitTimeMillisKey));
         time = Long.valueOf(resource.get(timeKey));
         resource.set("default_currentTime","0");
         resource.set("default_requestTime","0");
+        resource.set("default_startLimitTimeMillis",String.valueOf(System.currentTimeMillis()));
 
         resource.close();
 
     }
 
+    public String getLimitTimeMillisKey() {
+        return limitTimeMillisKey;
+    }
+
+    public void setLimitTimeMillisKey(String limitTimeMillisKey) {
+        this.limitTimeMillisKey = limitTimeMillisKey;
+    }
+
+    public String getTimeKey() {
+        return timeKey;
+    }
+
+    public void setTimeKey(String timeKey) {
+        this.timeKey = timeKey;
+    }
+
+    public Jedis getClient(){
+        return jedisPool.getResource();
+    }
+
+    public void closeJedis(Jedis client){
+        client.close();
+    }
 
     @Override
     public long getLimitTimeMillis() {
@@ -125,7 +156,7 @@ public class RedisRate implements Rate{
         if (flag){
             jedis.incr("default_requestTime");
         }
-        jedis.expire("rate_lock",(int)limitTimeMillis/1000 + 1);
+        jedis.expire("rate_lock",(int)limitTimeMillis/1000);
         jedis.close();
         return flag;
 
@@ -133,7 +164,13 @@ public class RedisRate implements Rate{
 
     public void releaseLock(){
         Jedis jedis = jedisPool.getResource();
+//        jedis.watch("rate_lock");
+//        Transaction multi = jedis.multi();
+//        multi.del("rate_lock");
+//        multi.exec();
+//        jedis.unwatch();
         jedis.del("rate_lock");
+
         jedis.close();
     }
 
