@@ -2,6 +2,7 @@ package com.chuanglan.autoConfig;
 
 import com.chuanglan.config.DefaultRatelimiter;
 import com.chuanglan.config.RateLimiter;
+import com.chuanglan.config.RedisLuaRateLimiter;
 import com.chuanglan.entity.MemoryRate;
 import com.chuanglan.entity.Rate;
 import com.chuanglan.entity.RedisRate;
@@ -122,7 +123,11 @@ public class RatelimiterAutoConfiguration {
     @Bean
     @ConditionalOnBean(Rate.class)
     public RateLimiter rateLimiter(Rate rate){
+        if (rate instanceof RedisRate){
+            return new RedisLuaRateLimiter(rate);
+        }
         RateLimiter rateLimiter = new DefaultRatelimiter(rate);
+
         rateLimiter.isNeedRequestTime(needRequestTime);
         return rateLimiter;
     }
