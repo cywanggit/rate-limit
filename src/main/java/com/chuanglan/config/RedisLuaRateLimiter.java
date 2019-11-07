@@ -84,11 +84,9 @@ public class RedisLuaRateLimiter extends AbstractRateLimiter{
             eval = client.eval(luaScirpt, keys, values);//使用lua脚本 可以减少网络开销  大大提升了性能和安全 从之前的分部操作(需要分布式锁) 提升为 原子操作
             if ("1".equals(eval.toString())){
                 return true;
-            }else if ("0".equals(eval.toString())){
-                System.out.println("0");
+            }else if ("0".equals(eval.toString())){  //分开 0 和 2 后续可以进行统计操作失败的原因
                 return false;
             }else if ("2".equals(eval.toString())){
-                System.out.println("2");
                 return false;
             }
         }catch(Exception e){
