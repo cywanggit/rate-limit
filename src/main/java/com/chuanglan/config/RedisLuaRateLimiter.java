@@ -90,12 +90,11 @@ public class RedisLuaRateLimiter extends AbstractRateLimiter{
                 return false;
             }
         }catch(Exception e){
-
+            e.printStackTrace();
         }finally{
             client.close();
         }
-        throw new RuntimeException("lua脚本数据返回异常:");
-
+        return false;
     }
 
 
