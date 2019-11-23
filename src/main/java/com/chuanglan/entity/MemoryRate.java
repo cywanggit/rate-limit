@@ -12,15 +12,13 @@ public class MemoryRate implements Rate {
 
     private Object lockTime = new Object();
 
-    private Object lockRequestTime = new Object();
 
     private long limitTimeMillis;
 
     private long time;
 
-    private volatile long currentTime = 0; //当前通过次数
+    private volatile long currentTime = 0; //当前通过次数 类似桶
 
-    private volatile long requestTime = 0; // 请求次数 可以做 接口的访问量的计数
 
     private volatile long startLimitTimeMillis; //本次限制的开始时间
 
@@ -69,18 +67,7 @@ public class MemoryRate implements Rate {
     }
 
     public void addTime(){
-        synchronized (lockTime){
             currentTime ++;
-        }
-    }
-
-    public long getRequestTime() {
-        return this.requestTime;
-    }
-
-    @Override
-    public void setRequestTime(long requestTime) {
-        this.requestTime = requestTime;
     }
 
     @Override
@@ -90,12 +77,6 @@ public class MemoryRate implements Rate {
 
     @Override
     public void releaseLock() {
-    }
-
-    public void addRequestTime() {
-        synchronized (lockRequestTime){
-            requestTime ++;
-        }
     }
 
 }

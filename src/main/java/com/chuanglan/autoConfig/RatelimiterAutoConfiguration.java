@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  * @copyright (C),  2019-2019, 创蓝253
@@ -128,7 +129,6 @@ public class RatelimiterAutoConfiguration {
         }
         RateLimiter rateLimiter = new DefaultRatelimiter(rate);
 
-        rateLimiter.isNeedRequestTime(needRequestTime);
         return rateLimiter;
     }
 }

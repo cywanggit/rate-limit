@@ -98,8 +98,5 @@ public class RedisLuaRateLimiter extends AbstractRateLimiter{
 
     }
 
-    @Override
-    public boolean limit(boolean isNeedRequestTime) {
-        return limit();
-    }
+
 }

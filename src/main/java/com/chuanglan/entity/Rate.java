@@ -23,12 +23,6 @@ public interface Rate {
 
     void addTime();
 
-    void addRequestTime();
-
-    long getRequestTime();
-
-    void setRequestTime(long requestTime);
-
     boolean getLock();
 
     void releaseLock();

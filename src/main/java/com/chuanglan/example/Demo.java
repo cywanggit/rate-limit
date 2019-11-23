@@ -20,8 +20,8 @@ import java.util.concurrent.Executors;
 public class Demo {
     public static void main(String[] args) throws InterruptedException {
         Demo demo = new Demo();
-//        demo.test();
-        demo.testNewRedisLimiter();
+        demo.test();
+//        demo.testNewRedisLimiter();
     }
 
 
@@ -35,36 +35,31 @@ public class Demo {
         }
 
 
-        Thread.sleep(10000);
         for (int i = 0; i < 1000; i++) {
-            executor.execute(new RedisRateTest("" + (i+1000),rate,rateLimiter));
+            executor.execute(new RedisRateTest("" + (i+600),rate,rateLimiter));
         }
         executor.shutdown();
     }
 
     public void test() throws InterruptedException {
-        Rate rate = new MemoryRate(1000,500);
-//        Rate rate = new RedisRate("localhost",6379,"","");
+        Rate rate = new MemoryRate(1000,10);
         RateLimiter rateLimiter = new DefaultRatelimiter(rate);
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
-        System.out.println(System.currentTimeMillis());
-        for (int i = 0; i < 600; i++) {
-            executor.execute(new RateTest("" + i,rate,rateLimiter));
+        for (int i = 0; i < 30; i++) {
+            executor.execute(new MemoryRateTest("" + i,rate,rateLimiter));
         }
-        System.out.println(System.currentTimeMillis());
-        Thread.sleep(1000);
-        for (int i = 0; i < 1000; i++) {
-            executor.execute(new RateTest("" + (i+1000),rate,rateLimiter));
+        for (int i = 0; i < 10; i++) {
+            executor.execute(new MemoryRateTest("" + (i+30),rate,rateLimiter));
         }
         executor.shutdown();
     }
-    class RateTest implements Runnable {
+    class MemoryRateTest implements Runnable {
         private Rate rate;
         private RateLimiter rateLimiter;
         private String name;
 
-        public RateTest(String name,Rate rate, RateLimiter rateLimiter) {
+        public MemoryRateTest(String name,Rate rate, RateLimiter rateLimiter) {
             this.rate = rate;
             this.rateLimiter = rateLimiter;
             this.name = name;
@@ -73,14 +68,8 @@ public class Demo {
         @Override
         public void run() {
             long start = System.currentTimeMillis();
-//            boolean limit = rateLimiter.limit();
-//            System.out.println("花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
-
-            while(!rate.getLock()){
-            }
             boolean limit = rateLimiter.limit();
-            rate.releaseLock();
-            System.out.println("当前时间:"+ rate.getStartLimitTimeMillis()+ "花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
+            System.out.println("当前时间:"+ rate.getStartLimitTimeMillis()+ "花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + ";结果是:" + limit);
         }
     }
 
@@ -98,10 +87,8 @@ public class Demo {
         @Override
         public void run() {
             long start = System.currentTimeMillis();
-//            boolean limit = rateLimiter.limit();
-//            System.out.println("花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
             boolean limit = rateLimiter.limit();
-            System.out.println("当前时间:"+ rate.getStartLimitTimeMillis()+ "花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() + "；请求次数 :" + rate.getRequestTime() +";结果是:" + limit);
+            System.out.println("当前时间:"+ rate.getStartLimitTimeMillis()+ "花费：" + (System.currentTimeMillis() - start)+ "当前是 " + name + "； 当前次数:" + rate.getCurrentTime() +";结果是:" + limit);
         }
     }
 }

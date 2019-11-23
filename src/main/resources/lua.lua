@@ -18,7 +18,7 @@ if  a >= tonumber(limitTimeMillis) then
 end
 
 local currentTime = redis.call('get','default_currentTime')
-print(currentTime)
+
 local time = redis.call('get',KEYS[2])
 if tonumber(currentTime) >= tonumber(time) then
     redis.call('del','rate_lock')

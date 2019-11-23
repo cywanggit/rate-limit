@@ -37,10 +37,8 @@ public class RedisRate implements Rate{
         JedisPoolConfig config = new JedisPoolConfig();
         // 1.1 最大连接数
         config.setMaxTotal(30);
-
         //1.2 最大空闲连接数
         config.setMaxIdle(10);
-
         //获得连接池
         jedisPool = new JedisPool(config,host,port);
         Jedis resource = jedisPool.getResource();
@@ -48,10 +46,6 @@ public class RedisRate implements Rate{
         this.timeKey = timeKey;
         limitTimeMillis = Long.valueOf(resource.get(limitTimeMillisKey));
         time = Long.valueOf(resource.get(timeKey));
-        resource.set("default_currentTime","0");
-        resource.set("default_requestTime","0");
-        resource.set("default_startLimitTimeMillis",String.valueOf(System.currentTimeMillis()));
-
         resource.close();
 
     }
@@ -126,36 +120,16 @@ public class RedisRate implements Rate{
     @Override
     public void addTime() {
         Jedis jedis = jedisPool.getResource();
-        Long default_currentTime = jedis.incr("default_currentTime");
+        jedis.incr("default_currentTime");
         jedis.close();
     }
 
 
-    @Override
-    public void addRequestTime() {
-    }
 
-    @Override
-    public long getRequestTime() {
-        Jedis jedis = jedisPool.getResource();
-        Long default_requestTime = Long.valueOf(jedis.get("default_requestTime"));
-        jedis.close();
-        return default_requestTime;
-    }
-
-    @Override
-    public void setRequestTime(long requestTime) {
-        Jedis jedis = jedisPool.getResource();
-        jedis.set("default_requestTime",String.valueOf(requestTime));
-        jedis.close();
-    }
     public boolean getLock(){
         Jedis jedis = jedisPool.getResource();
         Long lock = jedis.setnx("rate_lock", "1");
         boolean flag = lock == 1;
-        if (flag){
-            jedis.incr("default_requestTime");
-        }
         jedis.expire("rate_lock",(int)limitTimeMillis/1000);
         jedis.close();
         return flag;
