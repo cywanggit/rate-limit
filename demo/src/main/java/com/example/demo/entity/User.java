@@ -30,8 +30,5 @@ public class User {
 
 
     public static void main(String[] args) {
-        User user = User.builder().userName("CW").age(12).id("123445").build();
-        String integer = Optional.ofNullable(user).map(u -> u.getPassword()).orElse("2019");
-        System.out.println(integer);
     }
 }

@@ -1,30 +1,29 @@
 package com.example.demo;
 
-import com.example.demo.entity.User;
-import com.example.demo.resp.UserRepository;
+import com.example.demo.collection.MobileJudgeService;
+import com.example.demo.dao.NativePhoneDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = {DemoApplication.class})
 public class DemoApplicationTests {
+    private Integer pageSize = 100000;
 
     @Autowired
-    private UserRepository UserRepository;
+    MobileJudgeService mobileJudgeService;
+
 
     @Test
     public void contextLoads() {
-        System.out.println(UserRepository.findByUserNameContains("CW").size());
-        ;
+        mobileJudgeService.getSysAbility("18656710171",1);
+
     }
-    @Test
-    public void testSave(){
-        User build = User.builder().age(19).build();
-        UserRepository.save(build);
-        System.out.println(build.getId());
-    }
+
 
 }
