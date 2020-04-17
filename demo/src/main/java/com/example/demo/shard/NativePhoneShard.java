@@ -1,6 +1,7 @@
 package com.example.demo.shard;
 
 import com.example.demo.base.AbstractShardStrategy;
+import org.springframework.stereotype.Component;
 
 /**
  * @author cw
@@ -9,6 +10,7 @@ import com.example.demo.base.AbstractShardStrategy;
  * @FileName NativePhoneShard
  * @create 2020-04-17 13:59
  */
+@Component("native.phone.shard")
 public class NativePhoneShard extends AbstractShardStrategy<String> {
     @Override
     protected String generateColectionName() {
