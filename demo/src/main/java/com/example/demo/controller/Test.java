@@ -25,11 +25,13 @@ public class Test {
     @Autowired
     MobileCache mobileCache;
     @RequestMapping("/test")
-    public void test(String phone,Integer businessNo){
+    public void test(String phone,Integer businessNo, Integer time){
         StopWatch start = new StopWatch(phone);
         start.start("test");
-        boolean sysAbility = mobileJudgeService.getSysAbility(phone, businessNo);
-        System.out.println(sysAbility);
+        for (int i = 0; i < time; i++){
+            mobileJudgeService.getSysAbility(phone, businessNo);
+        }
+        start.stop();
         System.out.println(start.prettyPrint());
     }
 

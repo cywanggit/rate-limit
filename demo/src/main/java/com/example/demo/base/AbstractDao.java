@@ -57,10 +57,5 @@ public abstract class AbstractDao<M> implements Dao<M>, InitializingBean {
      */
     protected abstract String getDbName();
 
-    /**
-     * 获取集合名称
-     *
-     * @return
-     */
-    protected abstract String getCollection();
+
 }

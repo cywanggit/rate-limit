@@ -4,6 +4,8 @@ import com.mongodb.client.model.IndexOptions;
 import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 /**
  * @name：
  * @author：xiong.qiu
@@ -30,6 +32,11 @@ public abstract class DaoAdaptor<M> extends AbstractDao<M> {
 
     @Override
     public boolean saveOrUpdate(String collection, M m) {
+        return false;
+    }
+
+    @Override
+    public boolean insertBatch(String collection, List<M> list) {
         return false;
     }
 

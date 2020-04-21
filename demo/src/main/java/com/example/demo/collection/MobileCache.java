@@ -133,7 +133,7 @@ public class MobileCache {
             StopWatch stopWatch = new StopWatch(start/pageSize+"");
             stopWatch.start("query");
             //分页查出手机号做处理
-            List<PhoneEntity> phoneEntities = nativePhoneDao.queryList(start,limit);
+            List<PhoneEntity> phoneEntities = nativePhoneDao.queryList(start,limit,"");
             stopWatch.stop();
             stopWatch.start("put");
             if (phoneEntities != null && phoneEntities.size() > 0) {

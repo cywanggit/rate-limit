@@ -16,8 +16,17 @@ public interface MobileJudgeService {
      * @param businessNo
      * @return
      */
-    boolean addSysAbility(String phone,Integer businessNo);
+    boolean addSysAbility(String phone, Integer businessNo);
 
+
+    /**
+     * 拆分后的手机号 添加能力
+     * @param mobile
+     * @param localtion
+     * @param businessNo
+     * @return
+     */
+    public boolean addSysAbilityForDB(String mobile, Integer localtion, Integer businessNo);
 
     /**
      * 获取系统级别

@@ -11,6 +11,17 @@ public class PhoneEntity {
 
     private String mobile;
 
+    private String number;
+
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
     public String getMobile() {
         return mobile;
     }
@@ -18,6 +29,4 @@ public class PhoneEntity {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
-
-
 }

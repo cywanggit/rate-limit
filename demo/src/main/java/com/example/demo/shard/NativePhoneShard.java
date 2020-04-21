@@ -13,14 +13,16 @@ import org.springframework.stereotype.Component;
 @Component("native.phone.shard")
 public class NativePhoneShard extends AbstractShardStrategy<String> {
     @Override
-    protected String generateColectionName() {
+    public String generateColectionName() {
         return "native_mobile";
     }
 
     @Override
     protected String generateColectionSuffix(String s) {
-        String substring = s.substring(8);
-        // 分表规则
+        //按手机号最后一位进行分表
+        String substring = s.substring(10);
         return substring;
     }
+
+
 }

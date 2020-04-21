@@ -27,6 +27,15 @@ public interface Dao<M> {
      */
     boolean insert(String collection, M m);
 
+
+    /**
+     * 批量插入
+     * @param collection
+     * @param list
+     * @return
+     */
+    boolean insertBatch(String collection,List<M> list);
+
     /**
      * 保存或者更新
      * @param m
@@ -48,7 +57,7 @@ public interface Dao<M> {
      * @param limit
      * @return
      */
-    List<M> queryList(long start, int limit);
+    List<M> queryList(long start, int limit,String collection);
 
 
     /**
@@ -57,7 +66,7 @@ public interface Dao<M> {
      * @param limit
      * @return
      */
-    List<M> queryListByAgg( long start, long limit);
+    List<M> queryListByAgg( long start, long limit,String collection);
 
     /**
      * 创建索引
